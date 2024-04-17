@@ -1,0 +1,33 @@
+services:
+  webserver:
+    image: erp7441:pib_web
+    container_name: pib_web
+    hostname: pib_web
+    restart: unless-stopped
+    labels:
+      - "autoheal=true"
+      # - "com.centurylinklabs.watchtower.enable=false"
+    ports:
+     - 666:80
+    volumes:
+      - type: volume
+        source: data
+        target: /usr/share/nginx/html
+        read_only: true
+    networks:
+      - proxy
+    healthcheck:
+      test: "curl -f http://localhost/"
+      interval: 25s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  data:
+
+networks:
+  proxy:
+    name: nginx_proxy
+    external: true
+
